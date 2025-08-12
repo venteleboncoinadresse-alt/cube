@@ -1,12 +1,11 @@
 {
-  "name": "cube-tag-plus",
-  "version": "2.0.0",
-  "description": "Jeu 3D multijoueur Tag avec salons, pseudos, scoreboard – Three.js + Socket.IO",
+  "name": "cube-tag-v4_6d",
+  "version": "4.6.4",
+  "description": "Cube Tag v4.6d \u2014 size slider down to 0.01 and strict idle animation when stopped.",
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "node server.js",
-    "dev": "NODE_ENV=development node server.js"
+    "start": "node server.js"
   },
   "dependencies": {
     "express": "^4.19.2",

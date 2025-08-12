@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cube Tag v4.7 – 3D Multi</title>
+  <style>
+    html,body { margin:0; height:100%; background:#0b0b0b; color:#eee; font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    #hud { position:fixed; top:12px; left:12px; padding:8px 10px; background:rgba(0,0,0,0.5); border-radius:8px; backdrop-filter: blur(4px); }
+    #hud .row { margin:2px 0; font-size:14px; }
+    #hud b { color:#fff; }
+    #debug { position:fixed; top:12px; right:12px; font-size:12px; opacity:.85; max-width:40vw; }
+    #lobby { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.6); }
+    #panel { width:min(560px,92vw); border-radius:14px; padding:18px; background:rgba(20,20,20,0.95); box-shadow:0 20px 60px rgba(0,0,0,.6); }
+    .field { display:flex; gap:8px; margin:8px 0; }
+    .field input, .field select { flex:1; padding:10px 12px; border-radius:10px; border:1px solid #333; background:#121212; color:#eee; }
+    .btn { display:inline-block; padding:8px 12px; border-radius:10px; border:0; background:#5d8cff; color:white; font-weight:600; cursor:pointer; }
+    canvas:focus { outline:none; }
+    #options { position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; }
+    #optPanel { width:min(640px,94vw); background:#181818; border-radius:14px; padding:18px; }
+    table { width:100%; border-collapse: collapse; }
+    td { padding:10px; border-bottom:1px solid #2a2a2a; }
+    td:first-child { opacity:.85; width:40%; }
+    .keybtn { padding:6px 10px; border-radius:10px; background:#2b2b2b; border:1px solid #3a3a3a; cursor:pointer; }
+    .row-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
+    #openOpt { cursor:pointer; text-decoration:underline; }
+  </style>
+  <script type="importmap">
+  { "imports": {
+      "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+  } }
+  </script>
+</head>
+<body>
+  <div id="hud">
+    <div class="row"><b>Cube Tag v4.7</b> — ZQSD relatif caméra • <span id="openOpt">Options (O)</span></div>
+    <div class="row">Salon: <span id="room">–</span> • Ping: <span id="ping">–</span> • Score: <span id="score">0</span></div>
+    <div id="status" class="row">Hors ligne…</div>
+  </div>
+
+  <div id="debug">myId: <span id="dbgId">–</span><br>skin: <span id="dbgSkin">runner</span><br>diag: <span id="dbgDiag">–</span></div>
+
+  <div id="lobby">
+    <div id="panel">
+      <h2>Rejoindre</h2>
+      <div class="field"><input id="name" placeholder="Ton pseudo" maxlength="16"></div>
+      <div class="field"><input id="roomInput" placeholder="Code salon (ex: public)" maxlength="24"></div>
+      <div class="field">
+        <select id="skinSelect">
+          <option value="runner">Runner (équilibré)</option>
+          <option value="scout">Scout (rapide)</option>
+          <option value="heavy">Heavy (résistant)</option>
+        </select>
+      </div>
+      <div style="font-size:12px;opacity:.8">Si aucun modèle local, on charge un **GLB public** automatiquement.</div>
+      <div class="field" style="justify-content:flex-end"><button id="joinBtn" class="btn">Rejoindre</button></div>
+      <div style="font-size:12px;opacity:.8">ENTER pour rejoindre • Clique dans la scène pour activer les touches.</div>
+    </div>
+  </div>
+
+  <div id="options">
+    <div id="optPanel">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0">Options</h3>
+        <button id="closeOpt" class="btn" style="background:#444">Fermer</button>
+      </div>
+      <h4>Contrôles</h4>
+      <table>
+        <tr><td>Avancer</td><td><button class="keybtn" data-action="forward"></button></td></tr>
+        <tr><td>Reculer</td><td><button class="keybtn" data-action="back"></button></td></tr>
+        <tr><td>Gauche</td><td><button class="keybtn" data-action="left"></button></td></tr>
+        <tr><td>Droite</td><td><button class="keybtn" data-action="right"></button></td></tr>
+        <tr><td>Saut</td><td><button class="keybtn" data-action="jump"></button></td></tr>
+        <tr><td>Sprint</td><td><button class="keybtn" data-action="sprint"></button></td></tr>
+      </table>
+
+      <h4>Gameplay</h4>
+      <table>
+        <tr>
+          <td>Mode de déplacement</td>
+          <td>
+            <select id="moveMode">
+              <option value="tps">TPS (ZQSD relatif caméra)</option>
+              <option value="tank">Tank (Q/D tourne, Z/S avance)</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td>Sensibilité caméra</td>
+          <td>
+            <input id="camSens" type="range" min="0.2" max="2.0" step="0.05">
+            <span id="camSensVal"></span>
+          </td>
+        </tr>
+        <tr>
+          <td>URL GLB perso (optionnel)</td>
+          <td>
+            <input id="customGlbUrl" placeholder="https://.../monmodele.glb">
+          </td>
+        </tr>
+      </table>
+
+      <div class="row-actions">
+        <button id="resetOpt" class="btn" style="background:#666">Réinitialiser</button>
+        <button id="saveOpt" class="btn">Sauvegarder</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./client.js"></script>
+</body>
+</html>
