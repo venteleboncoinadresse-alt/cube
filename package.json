@@ -1,0 +1,15 @@
+{
+  "name": "cube-tag-plus",
+  "version": "2.0.0",
+  "description": "Jeu 3D multijoueur Tag avec salons, pseudos, scoreboard – Three.js + Socket.IO",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "NODE_ENV=development node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "socket.io": "^4.7.5"
+  }
+}

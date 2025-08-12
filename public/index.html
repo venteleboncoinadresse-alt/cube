@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Cube Tag+ – 3D Multi</title>
+  <style>
+    html,body { margin:0; height:100%; background:#0b0b0b; color:#eee; font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+    #hud { position:fixed; top:12px; left:12px; padding:8px 10px; background:rgba(0,0,0,0.5); border-radius:8px; backdrop-filter: blur(4px); }
+    #hud .row { margin:2px 0; font-size:14px; }
+    #hud b { color:#fff; }
+    #share { cursor:pointer; text-decoration:underline; }
+    #lobby { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; background: radial-gradient(ellipse at top, rgba(255,255,255,0.03), rgba(0,0,0,0.8)); }
+    #panel { width: min(420px, 92vw); border-radius: 14px; padding: 18px; background: rgba(20,20,20,0.9); box-shadow: 0 20px 60px rgba(0,0,0,0.6); }
+    #panel h1 { margin: 0 0 10px; font-size: 20px; }
+    .field { display:flex; gap:8px; margin: 8px 0; }
+    .field input { flex:1; padding:10px 12px; border-radius:10px; border:1px solid #333; background:#121212; color:#eee; }
+    .btn { display:inline-block; padding:10px 14px; border-radius:10px; border:0; background:#5d8cff; color:white; font-weight:600; cursor:pointer; }
+    .btn:active { transform: translateY(1px); }
+    #touch { position: fixed; right: 12px; bottom: 12px; display:flex; gap:8px; opacity:0.9; }
+    #touch .btn { width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center; background:#2b2b2b; }
+    #score { font-variant-numeric: tabular-nums; }
+  </style>
+
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "https://unpkg.com/three@0.161.0/build/three.module.js",
+      "three/addons/": "https://unpkg.com/three@0.161.0/examples/jsm/"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div id="hud">
+    <div class="row"><b>Cube Tag+</b> — W/S: avancer/reculer, A/D: tourner</div>
+    <div class="row">Salon: <span id="room">–</span> • <span id="share">copier lien</span></div>
+    <div class="row">Ping: <span id="ping">–</span> ms • Score: <span id="score">0</span></div>
+    <div id="status" class="row">Hors ligne…</div>
+  </div>
+
+  <div id="lobby">
+    <div id="panel">
+      <h1>Rejoindre un salon</h1>
+      <div class="field">
+        <input id="name" placeholder="Ton pseudo" maxlength="16">
+      </div>
+      <div class="field">
+        <input id="roomInput" placeholder="Code salon (ex: coolroom)" maxlength="24">
+      </div>
+      <div class="field" style="justify-content:flex-end">
+        <button id="joinBtn" class="btn">Rejoindre</button>
+      </div>
+      <div style="font-size:12px; opacity:0.8">Astuce : partage le lien après connexion pour inviter des amis.</div>
+    </div>
+  </div>
+
+  <div id="touch">
+    <button id="btnW" class="btn">W</button>
+    <div style="display:flex; flex-direction:column; gap:8px;">
+      <button id="btnA" class="btn">A</button>
+      <button id="btnD" class="btn">D</button>
+    </div>
+    <button id="btnS" class="btn">S</button>
+  </div>
+
+  <script type="module" src="./client.js"></script>
+</body>
+</html>
