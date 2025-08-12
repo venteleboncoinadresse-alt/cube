@@ -10,6 +10,7 @@ app.use(express.static("public"));
 
 const PORT = process.env.PORT || 3000;
 
+// basic rooms state
 const rooms = new Map();
 const TAG_RADIUS = 1.5;
 const TAG_COOLDOWN_MS = 1500;
@@ -26,23 +27,17 @@ function getOrCreateRoom(roomId) {
     rooms.set(roomId, {
       players: new Map(),
       taggerId: null,
-      arena: { minX: -20, maxX: 20, minZ: -20, maxZ: 20, minY: 0.5, maxY: 6 }
+      arena: { minX: -35, maxX: 35, minZ: -90, maxZ: 90, minY: 0.5, maxY: 6 }
     });
   }
   return rooms.get(roomId);
 }
-
-function sanitizeRoom(room) {
-  return (room || "").toString().toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 24) || "public";
-}
-function sanitizeName(name) {
+const sanitizeRoom = (room) => (room || "").toString().toLowerCase().replace(/[^a-z0-9_-]/g, "").slice(0, 24) || "public";
+const sanitizeName = (name) => {
   const n = (name || "").toString().trim().replace(/\s+/g, " ");
   return n.length ? n.slice(0, 16) : "Guest";
-}
-function sanitizeSkin(skin) {
-  const allowed = new Set(["scout","runner","heavy"]);
-  return allowed.has(skin) ? skin : "runner";
-}
+};
+const sanitizeSkin = (skin) => (new Set(["runner","scout","heavy"]).has(skin) ? skin : "runner");
 
 io.on("connection", (socket) => {
   let roomId = null;
@@ -114,6 +109,7 @@ io.on("connection", (socket) => {
   socket.on("net:ping", (t) => socket.emit("net:pong", t));
 });
 
+// broadcast state ~10Hz and tagging
 setInterval(() => {
   for (const [roomId, roomObj] of rooms.entries()) {
     if (roomObj.taggerId && roomObj.players.has(roomObj.taggerId)) {

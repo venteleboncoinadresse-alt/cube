@@ -1,7 +1,7 @@
 {
-  "name": "cube-tag-v4_6d",
-  "version": "4.6.4",
-  "description": "Cube Tag v4.6d \u2014 size slider down to 0.01 and strict idle animation when stopped.",
+  "name": "cube-tag-street-v5_0",
+  "version": "5.0.0",
+  "description": "Cube Tag with options + street scene (cars & houses).",
   "main": "server.js",
   "type": "module",
   "scripts": {

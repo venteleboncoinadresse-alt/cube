@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Cube Tag v4.6d – 3D Multi</title>
+  <title>Cube Tag – Rue & Maisons</title>
   <style>
     html,body { margin:0; height:100%; background:#0b0b0b; color:#eee; font-family:system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
     #hud { position:fixed; top:12px; left:12px; padding:8px 10px; background:rgba(0,0,0,0.5); border-radius:8px; backdrop-filter: blur(4px); }
     #hud .row { margin:2px 0; font-size:14px; }
-    #debug { position:fixed; top:12px; right:12px; font-size:12px; opacity:.85; white-space:pre; }
+    #hud b { color:#fff; }
     #lobby { position: fixed; inset: 0; display:flex; align-items:center; justify-content:center; background: rgba(0,0,0,0.6); }
     #panel { width:min(560px,92vw); border-radius:14px; padding:18px; background:rgba(20,20,20,0.95); box-shadow:0 20px 60px rgba(0,0,0,.6); }
     .field { display:flex; gap:8px; margin:8px 0; }
@@ -16,13 +16,14 @@
     .btn { display:inline-block; padding:8px 12px; border-radius:10px; border:0; background:#5d8cff; color:white; font-weight:600; cursor:pointer; }
     canvas:focus { outline:none; }
     #options { position:fixed; inset:0; background:rgba(0,0,0,.55); display:none; align-items:center; justify-content:center; }
-    #optPanel { width:min(620px,94vw); background:#181818; border-radius:14px; padding:18px; }
+    #optPanel { width:min(640px,94vw); background:#181818; border-radius:14px; padding:18px; }
     table { width:100%; border-collapse: collapse; }
     td { padding:10px; border-bottom:1px solid #2a2a2a; }
-    td:first-child { opacity:.85; width:45%; }
+    td:first-child { opacity:.85; width:40%; }
     .keybtn { padding:6px 10px; border-radius:10px; background:#2b2b2b; border:1px solid #3a3a3a; cursor:pointer; }
     .row-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:10px; }
     #openOpt { cursor:pointer; text-decoration:underline; }
+    #diag { position:fixed; bottom:8px; left:8px; font:12px/1.4 monospace; background:rgba(0,0,0,.45); padding:6px 8px; border-radius:8px; display:none; white-space:pre; }
   </style>
   <script type="importmap">
   { "imports": {
@@ -33,12 +34,10 @@
 </head>
 <body>
   <div id="hud">
-    <div class="row"><b>Cube Tag v4.6d</b> — ZQSD relatif caméra • <span id="openOpt">Options (O)</span></div>
+    <div class="row"><b>Cube Tag – Rue & Maisons</b> • <span id="openOpt">Options (O)</span></div>
     <div class="row">Salon: <span id="room">–</span> • Ping: <span id="ping">–</span> • Score: <span id="score">0</span></div>
     <div id="status" class="row">Hors ligne…</div>
   </div>
-
-  <pre id="debug">DIAG (F9 pour basculer)</pre>
 
   <div id="lobby">
     <div id="panel">
@@ -63,6 +62,13 @@
         <h3 style="margin:0">Options</h3>
         <button id="closeOpt" class="btn" style="background:#444">Fermer</button>
       </div>
+
+      <h4>Disposition clavier</h4>
+      <div>
+        <label><input type="radio" name="layout" value="azerty" checked> AZERTY (ZQSD)</label>
+        <label style="margin-left:18px;"><input type="radio" name="layout" value="qwerty"> QWERTY (WASD)</label>
+      </div>
+
       <h4>Contrôles</h4>
       <table>
         <tr><td>Avancer</td><td><button class="keybtn" data-action="forward"></button></td></tr>
@@ -87,23 +93,23 @@
         <tr>
           <td>Sensibilité caméra</td>
           <td>
-            <input id="camSens" type="range" min="0.2" max="2.0" step="0.05"><span id="camSensVal"></span>
+            <input id="camSens" type="range" min="0.2" max="2.0" step="0.05">
+            <span id="camSensVal"></span>
           </td>
         </tr>
         <tr>
           <td>Taille du personnage</td>
           <td>
-            <input id="charScale" type="range" min="0.01" max="2.0" step="0.01"><span id="charScaleVal"></span>
+            <input id="sizeSlider" type="range" min="0.01" max="2.0" step="0.01">
+            <span id="sizeVal"></span>
           </td>
         </tr>
         <tr>
-          <td>Personnage</td>
+          <td>Couleurs</td>
           <td>
-            <select id="skinSelectOpt">
-              <option value="runner">Runner</option>
-              <option value="scout">Scout</option>
-              <option value="heavy">Heavy</option>
-            </select>
+            Moi <input type="color" id="colSelf" value="#55ff55">
+            Autres <input type="color" id="colOther" value="#5599ff">
+            Chat <input type="color" id="colTag" value="#ff5555">
           </td>
         </tr>
       </table>
@@ -114,6 +120,8 @@
       </div>
     </div>
   </div>
+
+  <pre id="diag"></pre>
 
   <script type="module" src="./client.js"></script>
 </body>
